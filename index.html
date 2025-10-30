@@ -1,9 +1,134 @@
-<<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>Orchestral Instrument Families - Drag & Drop</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- Inline CSS: colors + fonts -->
+  <style type="text/css">
+    /* ===== Global ===== */
+    html, body {
+      margin: 0; padding: 0;
+      background-color: #a3b899; /* page bg (soft sage) */
+      font-family: "Garamond", Georgia, serif; /* classical serif */
+      color: #333;
+    }
+    h1 {
+      margin: 20px 10px 8px;
+      text-align: center;
+      color: #667b68;
+    }
+    p.instructions {
+      text-align: center;
+      margin: 0 10px 16px;
+      color: #667b68;
+    }
+    .style1 { font-weight: bold; }
+
+    /* ===== Outer container ===== */
+    #dhtmlgoodies_dragDropContainer{
+      width: 900px;
+      margin: 0 auto 24px auto; /* centered */
+      background-color: #fceee9; /* main container bg */
+      border: 3px solid #667b68; /* forest green border */
+      border-radius: 12px;
+      padding: 12px;
+      position: relative;
+    }
+
+    /* ===== Columns ===== */
+    #dhtmlgoodies_listOfItems{
+      float: left;
+      width: 260px;
+      margin-right: 12px;
+    }
+    #dhtmlgoodies_mainContainer{
+      float: left;
+      width: 600px; /* 4 boxes in a grid */
+    }
+
+    /* Clearfix */
+    #dhtmlgoodies_dragDropContainer:after{
+      content:""; display:block; clear:both;
+    }
+
+    /* ===== Left: items list ===== */
+    #dhtmlgoodies_listOfItems p{
+      margin: 0 0 8px 0;
+      font-weight: bold;
+      color: #667b68;
+      background-color: #f8d3c5; /* headings bg */
+      border-radius: 8px;
+      padding: 6px 8px;
+    }
+    #allItems{
+      list-style-type:none; margin:0; padding:0;
+      min-height: 300px;
+      background:#fff;
+      border: 2px solid #667b68;
+      border-radius: 10px;
+      padding: 6px;
+    }
+
+    /* ===== Right: family boxes grid ===== */
+    #dhtmlgoodies_mainContainer > div{
+      width: 285px; /* two per row */
+      margin: 0 12px 12px 0;
+      float: left;
+    }
+    #dhtmlgoodies_mainContainer > div:nth-child(2n){
+      margin-right: 0; /* align pairs */
+    }
+    #dhtmlgoodies_mainContainer div p{
+      margin: 0 0 6px 0;
+      background-color: #f8d3c5; /* headings bg */
+      color: #667b68;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-weight: bold;
+    }
+    #dhtmlgoodies_mainContainer ul{
+      list-style-type:none; margin:0; padding:6px;
+      min-height: 140px;
+      background:#fff;
+      border: 2px solid #667b68;
+      border-radius: 10px;
+    }
+
+    /* ===== Draggable items ===== */
+    ul li{
+      margin: 3px 0;
+      padding: 6px 8px;
+      background-color: #ffffff;
+      border: 1px solid #c8d1c8;
+      border-radius: 6px;
+      cursor: move;
+      user-select: none;
+    }
+    ul li.correctAnswer{ background-color:#c9e4ca; }  /* pale green */
+    ul li.wrongAnswer{   background-color:#f7caca; }  /* light rose */
+
+    /* Destination highlight */
+    .mouseover{
+      box-shadow: 0 0 0 3px rgba(102,123,104,0.25) inset;
+      border-radius: 10px;
+    }
+
+    /* Drag content & indicator */
+    #dragContent{
+      position:absolute; z-index:1000; list-style-type:none; margin:0; padding:0;
+    }
+    #dragContent li{
+      list-style-type:none; margin:0; padding:6px 8px;
+      background:#fff; border:1px solid #c8d1c8; border-radius:6px;
+    }
+    #dragDropIndicator{
+      position:absolute; z-index:999;
+    }
+
+    /* Optional: save output */
+    #saveContent{ width:900px; margin: 0 auto 40px; color:#333; }
+  </style>
 
   <script type="text/javascript">
   /* ====== Adjustable settings ====== */
@@ -301,48 +426,46 @@
 </head>
 
 <body>
-  <h1 align="center">Orchestral Instrument Families</h1>
-  <p>Drag and drop each instrument into its correct family. Each box can contain only <span class="style1">3 items</span>.</p>
+  <h1>Orchestral Instrument Families</h1>
+  <p class="instructions">Drag and drop each instrument into its correct family. Each box can contain only <span class="style1">3 items</span>.</p>
 
   <div id="dhtmlgoodies_dragDropContainer">
     <div id="topBar">
-      <div style="padding-bottom:5px; width:728px; height:1px;"></div>
+      <div style="padding-bottom:5px; width:100%; height:1px;"></div>
     </div>
 
     <!-- Left column: items -->
     <div id="dhtmlgoodies_listOfItems">
-      <div class="">
-        <p>Instruments/Names</p>
-        <ul id="allItems">
-          <!-- Strings -> box1 -->
-          <li id="node1"  groupid="box1">Violin</li>
-          <li id="node2"  groupid="box1">Viola</li>
-          <li id="node3"  groupid="box1">Cello</li>
+      <p>Instruments/Names</p>
+      <ul id="allItems">
+        <!-- Strings -> box1 -->
+        <li id="node1"  groupid="box1">Violin</li>
+        <li id="node2"  groupid="box1">Viola</li>
+        <li id="node3"  groupid="box1">Cello</li>
 
-          <!-- Woodwinds -> box2 -->
-          <li id="node4"  groupid="box2">Flute</li>
-          <li id="node5"  groupid="box2">Clarinet</li>
-          <li id="node6"  groupid="box2">Oboe</li>
+        <!-- Woodwinds -> box2 -->
+        <li id="node4"  groupid="box2">Flute</li>
+        <li id="node5"  groupid="box2">Clarinet</li>
+        <li id="node6"  groupid="box2">Oboe</li>
 
-          <!-- Brass -> box3 -->
-          <li id="node7"  groupid="box3">Trumpet</li>
-          <li id="node8"  groupid="box3">Trombone</li>
-          <li id="node9"  groupid="box3">French Horn</li>
+        <!-- Brass -> box3 -->
+        <li id="node7"  groupid="box3">Trumpet</li>
+        <li id="node8"  groupid="box3">Trombone</li>
+        <li id="node9"  groupid="box3">French Horn</li>
 
-          <!-- Percussion -> box4 -->
-          <li id="node10" groupid="box4">Timpani</li>
-          <li id="node11" groupid="box4">Snare Drum</li>
-          <li id="node12" groupid="box4">Cymbals</li>
-        </ul>
-      </div>
+        <!-- Percussion -> box4 -->
+        <li id="node10" groupid="box4">Timpani</li>
+        <li id="node11" groupid="box4">Snare Drum</li>
+        <li id="node12" groupid="box4">Cymbals</li>
+      </ul>
     </div>
 
     <!-- Right column: family boxes -->
     <div id="dhtmlgoodies_mainContainer">
-      <div class=""><p>Strings</p><ul id="box1"></ul></div>
-      <div class=""><p>Woodwinds</p><ul id="box2"></ul></div>
-      <div class=""><p>Brass</p><ul id="box3"></ul></div>
-      <div class=""><p>Percussion</p><ul id="box4"></ul></div>
+      <div><p>Strings</p><ul id="box1"></ul></div>
+      <div><p>Woodwinds</p><ul id="box2"></ul></div>
+      <div><p>Brass</p><ul id="box3"></ul></div>
+      <div><p>Percussion</p><ul id="box4"></ul></div>
     </div>
   </div>
 
@@ -351,3 +474,4 @@
   <div id="saveContent"></div>
 </body>
 </html>
+
